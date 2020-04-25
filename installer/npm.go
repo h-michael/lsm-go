@@ -67,8 +67,8 @@ func initBuildDir(lsName string) error {
 	if err := execNpm(buildDir, "init", "-y"); err != nil {
 		return err
 	}
-	body := []byte("{\"name\": \"\"}")
-	return ioutil.WriteFile(packageJsonPath, body, 0755)
+
+	return ioutil.WriteFile(packageJsonPath, []byte(`{"name": ""}`), 0755)
 }
 
 func getBinPathViaNpm(lsName string) (string, error) {
