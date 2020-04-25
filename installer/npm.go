@@ -47,12 +47,7 @@ func UninstallViaNpm(lsName string) error {
 	if err != nil {
 		return err
 	}
-
-	if err := os.RemoveAll(buildDir); err != nil {
-		return err
-	}
-
-	return nil
+	return os.RemoveAll(buildDir)
 }
 
 func initBuildDir(lsName string) error {
@@ -71,10 +66,7 @@ func initBuildDir(lsName string) error {
 		return err
 	}
 	body := []byte("{\"name\": \"\"}")
-	if err := ioutil.WriteFile(packageJsonPath, body, 0755); err != nil {
-		return err
-	}
-	return nil
+	return ioutil.WriteFile(packageJsonPath, body, 0755)
 }
 
 func getBinPathViaNpm(lsName string) (string, error) {
@@ -96,18 +88,9 @@ func execNpm(dir string, args ...string) error {
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 
-	err = cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return cmd.Run()
 }
 
 func NpmInstallGlobal(pkgName string) error {
-	if err := execNpm("install", "-g", pkgName); err != nil {
-		return err
-	}
-
-	return nil
+	return execNpm("install", "-g", pkgName)
 }
