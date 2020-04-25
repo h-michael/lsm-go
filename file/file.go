@@ -20,6 +20,7 @@ func BinDirName() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(mgrDir, "bin"), nil
 }
 
@@ -28,6 +29,7 @@ func BuildTopDirName() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(mgrDir, "build"), nil
 }
 
@@ -36,6 +38,7 @@ func BuildDirName(lsName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(buildTopDir, lsName), nil
 }
 
@@ -56,18 +59,14 @@ func CreateBuildDir(lsName string) error {
 		}
 	}
 
-	if err := os.Mkdir(buildDir, 0755); err != nil {
-		return err
-	}
-	return nil
+	return os.Mkdir(buildDir, 0755)
 }
 
 func RemoveSymLink(symLinkPath string) error {
 	if CheckSymLinkExistence(symLinkPath) {
-		if err := os.Remove(symLinkPath); err != nil {
-			return err
-		}
+		return os.Remove(symLinkPath)
 	}
+
 	return nil
 }
 
@@ -90,10 +89,7 @@ func createBuildTopDir() error {
 		createMgrDir()
 	}
 
-	if err := os.Mkdir(buildTopDir, 0755); err != nil {
-		return err
-	}
-	return nil
+	return os.Mkdir(buildTopDir, 0755)
 }
 
 func CreateBinDir() error {
@@ -115,10 +111,7 @@ func CreateBinDir() error {
 		createMgrDir()
 	}
 
-	if err := os.Mkdir(binDir, 0755); err != nil {
-		return err
-	}
-	return nil
+	return os.Mkdir(binDir, 0755)
 }
 
 func createMgrDir() error {
@@ -131,10 +124,7 @@ func createMgrDir() error {
 		return nil
 	}
 
-	if err := os.Mkdir(mgrDir, 0755); err != nil {
-		return err
-	}
-	return nil
+	return os.Mkdir(mgrDir, 0755)
 }
 
 func mgrDirName() (string, error) {
@@ -142,5 +132,6 @@ func mgrDirName() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(cacheDir, "lsm"), nil
 }

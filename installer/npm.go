@@ -58,10 +58,12 @@ func initBuildDir(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	packageJsonPath := path.Join(buildDir, "package.json")
 	if file.CheckFileExistence(packageJsonPath) {
 		return nil
 	}
+
 	if err := execNpm(buildDir, "init", "-y"); err != nil {
 		return err
 	}
@@ -78,8 +80,7 @@ func getBinPathViaNpm(lsName string) (string, error) {
 }
 
 func execNpm(dir string, args ...string) error {
-	_, err := exec.LookPath("npm")
-	if err != nil {
+	if _, err := exec.LookPath("npm"); err != nil {
 		return err
 	}
 
