@@ -14,8 +14,7 @@ func InstallViaNpm(lsName string) error {
 		return err
 	}
 
-	err := initBuildDir(lsName)
-	if err != nil {
+	if err := initBuildDir(lsName); err != nil {
 		return err
 	}
 
@@ -28,10 +27,7 @@ func InstallViaNpm(lsName string) error {
 		return err
 	}
 
-	if err := createLsSymLink(lsName, getBinPathViaNpm); err != nil {
-		return err
-	}
-	return nil
+	return createLsSymLink(lsName, getBinPathViaNpm)
 }
 
 func UninstallViaNpm(lsName string) error {
@@ -39,6 +35,7 @@ func UninstallViaNpm(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	if err := file.RemoveSymLink(symLink); err != nil {
 		return err
 	}
@@ -47,6 +44,7 @@ func UninstallViaNpm(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	return os.RemoveAll(buildDir)
 }
 
@@ -54,6 +52,7 @@ func initBuildDir(lsName string) error {
 	if err := file.CreateBuildDir(lsName); err != nil {
 		return err
 	}
+
 	buildDir, err := file.BuildDirName(lsName)
 	if err != nil {
 		return err
@@ -76,6 +75,7 @@ func getBinPathViaNpm(lsName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(buildDir, "node_modules", ".bin", lsName), nil
 }
 
