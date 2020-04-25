@@ -18,17 +18,40 @@ func InstallViaNpm(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	buildDir, err := file.BuildDirName(lsName)
 	if err != nil {
 		return err
 	}
+
 	if err := execNpm(buildDir, "install", lsName); err != nil {
 		return err
 	}
-	getBinPath := func(lsName string) (string, error) {
-		return path.Join(buildDir, "node_modules", ".bin", lsName), nil
+
+	if err := createLsSymLink(lsName, getBinPathViaNpm); err != nil {
+		return err
 	}
-	createSymLink(lsName, getBinPath)
+	return nil
+}
+
+func UninstallViaNpm(lsName string) error {
+	symLink, err := lsSymLinkPath(lsName)
+	if err != nil {
+		return err
+	}
+	if err := file.RemoveSymLink(symLink); err != nil {
+		return err
+	}
+
+	buildDir, err := file.BuildDirName(lsName)
+	if err != nil {
+		return err
+	}
+
+	if err := os.RemoveAll(buildDir); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -41,7 +64,7 @@ func initBuildDir(lsName string) error {
 		return err
 	}
 	packageJsonPath := path.Join(buildDir, "package.json")
-	if file.CheckExist(packageJsonPath) {
+	if file.CheckFileExistence(packageJsonPath) {
 		return nil
 	}
 	if err := execNpm(buildDir, "init", "-y"); err != nil {
@@ -52,6 +75,14 @@ func initBuildDir(lsName string) error {
 		return err
 	}
 	return nil
+}
+
+func getBinPathViaNpm(lsName string) (string, error) {
+	buildDir, err := file.BuildDirName(lsName)
+	if err != nil {
+		return "", err
+	}
+	return path.Join(buildDir, "node_modules", ".bin", lsName), nil
 }
 
 func execNpm(dir string, args ...string) error {

@@ -1,13 +1,19 @@
 package file
 
 import (
-	"fmt"
 	"os"
 	"path"
 )
 
-func CheckExist(path string) bool {
+func CheckFileExistence(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func CheckSymLinkExistence(path string) bool {
+	if _, err := os.Lstat(path); os.IsNotExist(err) {
 		return false
 	}
 	return true
@@ -42,17 +48,29 @@ func CreateBuildDir(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	buildDir := path.Join(buildTopDir, lsName)
-	if CheckExist(buildDir) {
+	if CheckFileExistence(buildDir) {
 		return nil
 	}
-	if !CheckExist(buildTopDir) {
+
+	if !CheckFileExistence(buildTopDir) {
 		if err := createBuildTopDir(); err != nil {
 			return err
 		}
 	}
+
 	if err := os.Mkdir(buildDir, 0755); err != nil {
 		return err
+	}
+	return nil
+}
+
+func RemoveSymLink(symLinkPath string) error {
+	if CheckSymLinkExistence(symLinkPath) {
+		if err := os.Remove(symLinkPath); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -62,16 +80,20 @@ func createBuildTopDir() error {
 	if err != nil {
 		return err
 	}
-	if CheckExist(buildTopDir) {
+
+	if CheckFileExistence(buildTopDir) {
 		return nil
 	}
+
 	mgrDir, err := mgrDirName()
 	if err != nil {
 		return err
 	}
-	if !CheckExist(mgrDir) {
+
+	if !CheckFileExistence(mgrDir) {
 		createMgrDir()
 	}
+
 	if err := os.Mkdir(buildTopDir, 0755); err != nil {
 		return err
 	}
@@ -83,16 +105,20 @@ func CreateBinDir() error {
 	if err != nil {
 		return err
 	}
+
 	binDir, err := BinDirName()
 	if err != nil {
 		return err
 	}
-	if CheckExist(binDir) {
+
+	if CheckFileExistence(binDir) {
 		return nil
 	}
-	if !CheckExist(mgrDir) {
+
+	if !CheckFileExistence(mgrDir) {
 		createMgrDir()
 	}
+
 	if err := os.Mkdir(binDir, 0755); err != nil {
 		return err
 	}
@@ -104,10 +130,11 @@ func createMgrDir() error {
 	if err != nil {
 		return err
 	}
-	if CheckExist(mgrDir) {
+
+	if CheckFileExistence(mgrDir) {
 		return nil
 	}
-	fmt.Printf("create %s\n", mgrDir)
+
 	if err := os.Mkdir(mgrDir, 0755); err != nil {
 		return err
 	}
