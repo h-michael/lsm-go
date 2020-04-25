@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/h-michael/lsm/pkgmgr"
+	"github.com/h-michael/lsm/installer"
 )
 
 func main() {
@@ -16,12 +16,12 @@ func main() {
 
 	switch cmd {
 	case "install":
-		if err := pkgmgr.InstallViaNpm(lsName); err != nil {
+		if err := installer.InstallViaNpm(lsName); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	case "uninstall":
-		if err := pkgmgr.UninstallViaNpm(lsName); err != nil {
+		if err := installer.UninstallViaNpm(lsName); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

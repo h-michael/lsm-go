@@ -1,4 +1,4 @@
-package pkgmgr
+package installer
 
 import (
 	"fmt"
