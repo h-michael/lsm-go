@@ -6,17 +6,13 @@ import (
 )
 
 func CheckFileExistence(path string) bool {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false
-	}
-	return true
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }
 
 func CheckSymLinkExistence(path string) bool {
-	if _, err := os.Lstat(path); os.IsNotExist(err) {
-		return false
-	}
-	return true
+	_, err := os.Lstat(path)
+	return !os.IsNotExist(err)
 }
 
 func BinDirName() (string, error) {
