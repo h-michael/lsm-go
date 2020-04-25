@@ -25,6 +25,10 @@ func InstallViaNpm(lsName string) error {
 	if err := execNpm(buildDir, "install", lsName); err != nil {
 		return err
 	}
+	getBinPath := func(lsName string) (string, error) {
+		return path.Join(buildDir, "node_modules", ".bin", lsName), nil
+	}
+	createSymLink(lsName, getBinPath)
 	return nil
 }
 
