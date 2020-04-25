@@ -13,8 +13,32 @@ func CheckExist(path string) bool {
 	return true
 }
 
+func BinDirName() (string, error) {
+	mgrDir, err := mgrDirName()
+	if err != nil {
+		return "", err
+	}
+	return path.Join(mgrDir, "bin"), nil
+}
+
+func BuildTopDirName() (string, error) {
+	mgrDir, err := mgrDirName()
+	if err != nil {
+		return "", err
+	}
+	return path.Join(mgrDir, "build"), nil
+}
+
+func BuildDirName(lsName string) (string, error) {
+	buildTopDir, err := BuildTopDirName()
+	if err != nil {
+		return "", err
+	}
+	return path.Join(buildTopDir, lsName), nil
+}
+
 func CreateBuildDir(lsName string) error {
-	buildTopDir, err := buildTopDirName()
+	buildTopDir, err := BuildTopDirName()
 	if err != nil {
 		return err
 	}
@@ -33,16 +57,8 @@ func CreateBuildDir(lsName string) error {
 	return nil
 }
 
-func BuildDirName(lsName string) (string, error) {
-	buildTopDir, err := buildTopDirName()
-	if err != nil {
-		return "", err
-	}
-	return path.Join(buildTopDir, lsName), nil
-}
-
 func createBuildTopDir() error {
-	buildTopDir, err := buildTopDirName()
+	buildTopDir, err := BuildTopDirName()
 	if err != nil {
 		return err
 	}
@@ -67,14 +83,17 @@ func CreateBinDir() error {
 	if err != nil {
 		return err
 	}
-	dirName := path.Join(mgrDir, "bin")
-	if CheckExist(dirName) {
+	binDir, err := BinDirName()
+	if err != nil {
+		return err
+	}
+	if CheckExist(binDir) {
 		return nil
 	}
 	if !CheckExist(mgrDir) {
 		createMgrDir()
 	}
-	if err := os.Mkdir(dirName, 0755); err != nil {
+	if err := os.Mkdir(binDir, 0755); err != nil {
 		return err
 	}
 	return nil
@@ -101,12 +120,4 @@ func mgrDirName() (string, error) {
 		return "", err
 	}
 	return path.Join(cacheDir, "lsm"), nil
-}
-
-func buildTopDirName() (string, error) {
-	mgrDir, err := mgrDirName()
-	if err != nil {
-		return "", err
-	}
-	return path.Join(mgrDir, "build"), nil
 }
