@@ -14,8 +14,7 @@ func InstallViaNpm(lsName string) error {
 		return err
 	}
 
-	err := initBuildDir(lsName)
-	if err != nil {
+	if err := initBuildDir(lsName); err != nil {
 		return err
 	}
 
@@ -28,10 +27,7 @@ func InstallViaNpm(lsName string) error {
 		return err
 	}
 
-	if err := createLsSymLink(lsName, getBinPathViaNpm); err != nil {
-		return err
-	}
-	return nil
+	return createLsSymLink(lsName, getBinPathViaNpm)
 }
 
 func UninstallViaNpm(lsName string) error {
@@ -39,6 +35,7 @@ func UninstallViaNpm(lsName string) error {
 	if err != nil {
 		return err
 	}
+
 	if err := file.RemoveSymLink(symLink); err != nil {
 		return err
 	}
@@ -48,33 +45,29 @@ func UninstallViaNpm(lsName string) error {
 		return err
 	}
 
-	if err := os.RemoveAll(buildDir); err != nil {
-		return err
-	}
-
-	return nil
+	return os.RemoveAll(buildDir)
 }
 
 func initBuildDir(lsName string) error {
 	if err := file.CreateBuildDir(lsName); err != nil {
 		return err
 	}
+
 	buildDir, err := file.BuildDirName(lsName)
 	if err != nil {
 		return err
 	}
+
 	packageJsonPath := path.Join(buildDir, "package.json")
 	if file.CheckFileExistence(packageJsonPath) {
 		return nil
 	}
+
 	if err := execNpm(buildDir, "init", "-y"); err != nil {
 		return err
 	}
-	body := []byte("{\"name\": \"\"}")
-	if err := ioutil.WriteFile(packageJsonPath, body, 0755); err != nil {
-		return err
-	}
-	return nil
+
+	return ioutil.WriteFile(packageJsonPath, []byte(`{"name": ""}`), 0755)
 }
 
 func getBinPathViaNpm(lsName string) (string, error) {
@@ -82,12 +75,12 @@ func getBinPathViaNpm(lsName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(buildDir, "node_modules", ".bin", lsName), nil
 }
 
 func execNpm(dir string, args ...string) error {
-	_, err := exec.LookPath("npm")
-	if err != nil {
+	if _, err := exec.LookPath("npm"); err != nil {
 		return err
 	}
 
@@ -96,18 +89,9 @@ func execNpm(dir string, args ...string) error {
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 
-	err = cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return cmd.Run()
 }
 
 func NpmInstallGlobal(pkgName string) error {
-	if err := execNpm("install", "-g", pkgName); err != nil {
-		return err
-	}
-
-	return nil
+	return execNpm("install", "-g", pkgName)
 }

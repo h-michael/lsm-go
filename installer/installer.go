@@ -31,10 +31,7 @@ func createLsSymLink(lsName string, getBinPath func(lsName string) (string, erro
 		return err
 	}
 
-	if err := os.Symlink(binPath, symLinkPath); err != nil {
-		return err
-	}
-	return nil
+	return os.Symlink(binPath, symLinkPath)
 }
 
 func lsSymLinkPath(lsName string) (string, error) {
@@ -42,5 +39,6 @@ func lsSymLinkPath(lsName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return path.Join(binDir, lsName), nil
 }
